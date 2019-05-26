@@ -142,33 +142,41 @@
         var totalDifference;
         var findFriend = (event) => {
             event.preventDefault();
+            var name = document.querySelector("#name").value.trim();
+            var photo = document.querySelector("#photo").value.trim();
             scores = [];
             var selects = document.querySelectorAll("select");
             for (let option of selects) {
                 scores.push(option.value.trim());
             }
-            var newFriend = {
-                name: document.querySelector("#name").value.trim(),
-                photo: document.querySelector("#photo").value.trim(),
-                scores: scores
-            };
-            // var diff = [for (i of scores) for (j of letters) i + j];
-            console.log(newFriend);
-            fetch("/api/friends", {
-            method: "POST",
-            body: JSON.stringify(newFriend),
-            headers: {
-              'Content-Type': 'application/json'
+            console.log(scores);
+            if (name === "" || photo === "" || scores.indexOf("Select a value") !== -1) {
+                alert("Please complete the survey");
+                return false;
+            } else {
+                var newFriend = {
+                    name: name,
+                    photo: photo,
+                    scores: scores
+                };
+                // var diff = [for (i of scores) for (j of letters) i + j];
+                console.log("butt", newFriend);
+                fetch("/api/friends", {
+                method: "POST",
+                body: JSON.stringify(newFriend),
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+                .then(response => {
+                  console.log(response)
+                  response.json()
+                })
+                .then(data => {
+                  console.log("add.html", data);
+                  alert("Adding friend...", newFriend);
+                });
             }
-          })
-            .then(response => {
-              console.log(response)
-              response.json()
-            })
-            .then(data => {
-              console.log("add.html", data);
-              alert("Adding friend...");
-            });
         };
         submit.addEventListener("click", findFriend);
     </script>

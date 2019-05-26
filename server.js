@@ -1,25 +1,27 @@
 const express = require('express');
 const path = require('path');
-const htmlRoutes = require('./app/routing/htmlRoutes.js');
-const apiRoutes = require('./app/routing/apiRoutes.js');
+var app = express();
+var allFriends = require('./app/data/friends')
 
 var PORT = process.env.PORT || 3000;
-var app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-htmlRoutes.homePage();
-htmlRoutes.survey();
-htmlRoutes.test();
+require(path.join(__dirname, './app/routing/htmlRoutes.js'))(app);
+require(path.join(__dirname, "./app/routing/apiRoutes.js"))(app);
 
-app.get("/", function (req, res) {
-    res.sendFile(path.join(__dirname, "app/public/home.html"));
-})
-// apiRoutes;
+app.post("/api/friends", function (req, res) {
+    // req.body hosts is equal to the JSON post sent from the user
+    // This works because of our body parsing middleware
+    var newFriend = req.body;
+    console.log("new friend:", newFriend);
+    allFriends.friends.push(newFriend);
+
+    // We then display the JSON to the users
+    res.json(allFriends.friends);
+});
 
 app.listen(PORT, function() {
     console.log(`App is listening on port ${PORT}`);
-    htmlRoutes.homePage();
-    htmlRoutes.survey();
 })
