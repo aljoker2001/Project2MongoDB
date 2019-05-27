@@ -125,7 +125,8 @@
             <option value="4">4</option>
             <option value="5">5 (Strongly Agree)</option>
         </select>
-        <button type="button" class="col btn btn-primary"><i class="far fa-check-square"></i> Submit</button>
+        <button type="button" class="col btn btn-primary" data-toggle="modal" data-target="#friendModal"><i
+                class="far fa-check-square"></i> Submit</button>
         <hr>
         <!-- Control Panel -->
         <section class="center mw7 hidden pv4 mb2">
@@ -134,16 +135,46 @@
                     href="https://github.com/aljoker2001/FriendFinder" class="link" target="_blank">GitHub Repo</a>
             </nav>
         </section>
+        <!-- Modal -->
+        <div class="modal fade" id="friendModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Your Perfect Friend is:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <script>
         var submit = document.querySelector("button"),
+            modalContent = document.querySelector(".modal-body"),
             scores = [],
             totalDifference,
             sumTotal = 0,
             friendDifferences = [],
             forms = document.querySelectorAll("form"),
-            bigDiff = {difference: 1000};
+            bigDiff = { difference: 1000 };
 
         function handleErrors(response) {
             if (!response.ok) {
@@ -215,8 +246,10 @@
                             }
                         }
                         console.log(bigDiff);
+                        modalContent.innerHTML = `<h1>${bigDiff.name}</h1>
+                        <img src='${bigDiff.photo}' alt='photo of ${bigDiff.name}'>`;
                         console.log("friends with differences", friendDifferences);
-                        alert("Adding friend...", newFriend);
+                        // alert("Adding friend...", newFriend);
                     });
             }
         };
