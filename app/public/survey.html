@@ -137,11 +137,13 @@
     </div>
 
     <script>
-        var submit = document.querySelector("button");
-        var scores = [];
-        var totalDifference;
-        var sumTotal = 0;
-        var forms = document.querySelectorAll("form");
+        var submit = document.querySelector("button"),
+            scores = [],
+            totalDifference,
+            sumTotal = 0,
+            friendDifferences = [],
+            forms = document.querySelectorAll("form"),
+            bigDiff = {difference: 1000};
 
         function handleErrors(response) {
             if (!response.ok) {
@@ -156,13 +158,13 @@
             var photo = document.querySelector("#photo").value.trim();
             scores = [];
             var selects = document.querySelectorAll("select");
-            if (name === "" || photo === "" || scores.indexOf("Select a value") !== -1) {
+            for (let option of selects) {
+                scores.push(parseInt(option.value.trim()));
+            }
+            if (name === "" || photo === "" || scores.includes(NaN)) {
                 alert("Please complete the survey");
                 return false;
             } else {
-                for (let option of selects) {
-                    scores.push(parseInt(option.value.trim()));
-                }
                 console.log(scores);
                 for (let form of forms) {
                     form.reset();
@@ -190,6 +192,7 @@
                         return response.json()
                     })
                     .then(data => {
+                        console.log(data.pop());
                         console.log("add.html", data);
                         for (let friend of data) {
                             sumTotal = 0;
@@ -199,11 +202,20 @@
                             })
                             console.log("diff array", totalDifference);
                             for (let val of totalDifference) {
-                                console.log(val, typeof val);
                                 sumTotal += val;
                             }
+                            friend.difference = sumTotal;
+                            friendDifferences.push(friend);
+                            console.log(friend);
                             console.log("sum of array", sumTotal);
                         }
+                        for (let diff of friendDifferences) {
+                            if (diff.difference < bigDiff.difference) {
+                                bigDiff = diff;
+                            }
+                        }
+                        console.log(bigDiff);
+                        console.log("friends with differences", friendDifferences);
                         alert("Adding friend...", newFriend);
                     });
             }
