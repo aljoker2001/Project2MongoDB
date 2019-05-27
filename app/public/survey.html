@@ -140,6 +140,14 @@
         var submit = document.querySelector("button");
         var scores = [];
         var totalDifference;
+
+        function handleErrors(response) {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            return response;
+        }
+
         var findFriend = (event) => {
             event.preventDefault();
             var name = document.querySelector("#name").value.trim();
@@ -147,7 +155,7 @@
             scores = [];
             var selects = document.querySelectorAll("select");
             for (let option of selects) {
-                scores.push(option.value.trim());
+                scores.push(parseInt(option.value.trim()));
             }
             console.log(scores);
             if (name === "" || photo === "" || scores.indexOf("Select a value") !== -1) {
@@ -162,20 +170,21 @@
                 // var diff = [for (i of scores) for (j of letters) i + j];
                 console.log("butt", newFriend);
                 fetch("/api/friends", {
-                method: "POST",
-                body: JSON.stringify(newFriend),
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-              })
-                .then(response => {
-                  console.log(response)
-                  response.json()
+                    method: "POST",
+                    body: JSON.stringify(newFriend),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
-                .then(data => {
-                  console.log("add.html", data);
-                  alert("Adding friend...", newFriend);
-                });
+                    .then(handleErrors)
+                    .then(response => {
+                        console.log(response)
+                        return response.json()
+                    })
+                    .then(data => {
+                        console.log("add.html", data);
+                        alert("Adding friend...", newFriend);
+                    });
             }
         };
         submit.addEventListener("click", findFriend);
