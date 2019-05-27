@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
@@ -139,7 +140,7 @@
         <div class="modal fade" id="friendModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
+                <div id="modalContent" class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Your Perfect Friend is:</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -168,13 +169,10 @@
         crossorigin="anonymous"></script>
     <script>
         var submit = document.querySelector("button"),
-            modalContent = document.querySelector(".modal-body"),
+            modalBody = document.querySelector(".modal-body"),
             scores = [],
-            totalDifference,
             sumTotal = 0,
-            friendDifferences = [],
-            forms = document.querySelectorAll("form"),
-            bigDiff = { difference: 1000 };
+            forms = document.querySelectorAll("form");
 
         function handleErrors(response) {
             if (!response.ok) {
@@ -185,6 +183,12 @@
 
         var findFriend = (event) => {
             event.preventDefault();
+            var friendDifferences = [],
+                totalDifference = [],
+                bigDiff = { difference: 1000 };
+            if (submit.getAttribute("data-toggle") === null || submit.getAttribute("data-toggle") === '') {
+                submit.setAttribute("data-toggle", "modal");
+            }
             var name = document.querySelector("#name").value.trim();
             var photo = document.querySelector("#photo").value.trim();
             scores = [];
@@ -194,9 +198,12 @@
             }
             if (name === "" || photo === "" || scores.includes(NaN)) {
                 alert("Please complete the survey");
+                console.log(friendDifferences);
+                submit.toggleAttribute("data-toggle");
                 return false;
             } else {
                 console.log(scores);
+                console.log(friendDifferences);
                 for (let form of forms) {
                     form.reset();
                 }
@@ -208,7 +215,6 @@
                     photo: photo,
                     scores: scores
                 };
-                // var diff = [for (i of scores) for (j of letters) i + j];
                 console.log("butt", newFriend);
                 fetch("/api/friends", {
                     method: "POST",
@@ -223,7 +229,7 @@
                         return response.json()
                     })
                     .then(data => {
-                        console.log(data.pop());
+                        data.pop();
                         console.log("add.html", data);
                         for (let friend of data) {
                             sumTotal = 0;
@@ -246,10 +252,9 @@
                             }
                         }
                         console.log(bigDiff);
-                        modalContent.innerHTML = `<h1>${bigDiff.name}</h1>
-                        <img src='${bigDiff.photo}' alt='photo of ${bigDiff.name}'>`;
+                        modalBody.innerHTML = `<h1>${bigDiff.name}</h1>
+                        <img src='${bigDiff.photo}' width='75%' alt='photo of ${bigDiff.name}'>`;
                         console.log("friends with differences", friendDifferences);
-                        // alert("Adding friend...", newFriend);
                     });
             }
         };
