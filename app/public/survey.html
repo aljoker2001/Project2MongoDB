@@ -17,14 +17,14 @@
         <h2>Survey Questions</h2>
         <hr>
         <h3><strong>About You</strong></h3>
-        <div class="form-group">
+        <form class="form-group">
             <label>Name (Required)</label>
             <input id="name" type="text" class="form-control" required>
-        </div>
-        <div class="form-group">
+        </form>
+        <form class="form-group">
             <label>Link/URL to Photo Image (Required)</label>
             <input id="photo" type="url" class="form-control" required>
-        </div>
+        </form>
         <h3><strong>Question 1</strong></h3>
         <h4>You often find yourself daydreaming about being a penguin.</h4>
         <select class="col-2 mb-3 custom-select">
@@ -140,6 +140,8 @@
         var submit = document.querySelector("button");
         var scores = [];
         var totalDifference;
+        var sumTotal = 0;
+        var forms = document.querySelectorAll("form");
 
         function handleErrors(response) {
             if (!response.ok) {
@@ -154,14 +156,20 @@
             var photo = document.querySelector("#photo").value.trim();
             scores = [];
             var selects = document.querySelectorAll("select");
-            for (let option of selects) {
-                scores.push(parseInt(option.value.trim()));
-            }
-            console.log(scores);
             if (name === "" || photo === "" || scores.indexOf("Select a value") !== -1) {
                 alert("Please complete the survey");
                 return false;
             } else {
+                for (let option of selects) {
+                    scores.push(parseInt(option.value.trim()));
+                }
+                console.log(scores);
+                for (let form of forms) {
+                    form.reset();
+                }
+                for (let i of selects) {
+                    i.selectedIndex = 0;
+                }
                 var newFriend = {
                     name: name,
                     photo: photo,
@@ -183,6 +191,19 @@
                     })
                     .then(data => {
                         console.log("add.html", data);
+                        for (let friend of data) {
+                            sumTotal = 0;
+                            console.log(friend);
+                            totalDifference = friend.scores.map(function (item, index) {
+                                return Math.abs(item - newFriend.scores[index]);
+                            })
+                            console.log("diff array", totalDifference);
+                            for (let val of totalDifference) {
+                                console.log(val, typeof val);
+                                sumTotal += val;
+                            }
+                            console.log("sum of array", sumTotal);
+                        }
                         alert("Adding friend...", newFriend);
                     });
             }
