@@ -10,11 +10,11 @@ https://polar-sea-33252.herokuapp.com/
 
 Upon arrival at the home page, the user has the option to go to the survey, check out the API list of existing friends, or head on over to the GitHub repo.
 
-![home-page](/images/homePage.png)
+![home-page](/app/images/homePage.png)
 
 If the user decides to take the survey, once completed, they will be presented a modal of their perfect friend.
 
-![perfect-friend](/images/perfectFriend.png)
+![perfect-friend](/app/images/perfectFriend.png)
 
 ## Code Explanation
 
