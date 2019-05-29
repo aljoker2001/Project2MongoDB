@@ -172,7 +172,7 @@
             scores = [],
             sumTotal = 0,
             forms = document.querySelectorAll("form");
-
+        // Defines how to handle errors in the fetch.  This is called later
         function handleErrors(response) {
             if (!response.ok) {
                 throw Error(response.statusText);
@@ -185,6 +185,7 @@
             var friendDifferences = [],
                 totalDifference = [],
                 bigDiff = { difference: 1000 };
+            // This resets the modal toggle
             if (submit.getAttribute("data-toggle") === null || submit.getAttribute("data-toggle") === '') {
                 submit.setAttribute("data-toggle", "modal");
             }
@@ -195,17 +196,21 @@
             for (let option of selects) {
                 scores.push(parseInt(option.value.trim()));
             }
+            // If any field is not filled out/completed, the user is alerted that they need to complete it
             if (name === "" || photo === "" || scores.includes(NaN)) {
                 alert("Please complete the survey");
                 console.log(friendDifferences);
+                // turns off modal toggle so the modal isn't displayed when submitting incomplete survey data
                 submit.toggleAttribute("data-toggle");
                 return false;
             } else {
                 console.log(scores);
                 console.log(friendDifferences);
+                // Resets the form fields upon submission
                 for (let form of forms) {
                     form.reset();
                 }
+                // Sets all of the dropdowns back to index 0 upon submission
                 for (let i of selects) {
                     i.selectedIndex = 0;
                 }
@@ -214,7 +219,7 @@
                     photo: photo,
                     scores: scores
                 };
-                console.log("butt", newFriend);
+                // Sends newFriend data to the api page
                 fetch("/api/friends", {
                     method: "POST",
                     body: JSON.stringify(newFriend),
@@ -224,33 +229,32 @@
                 })
                     .then(handleErrors)
                     .then(response => {
-                        console.log(response)
                         return response.json()
                     })
                     .then(data => {
+                        // Removes the user's submission from the list when comparing scores
                         data.pop();
-                        console.log("add.html", data);
                         for (let friend of data) {
                             sumTotal = 0;
-                            console.log(friend);
+                            // This compares the user's scores to each friend in the database
                             totalDifference = friend.scores.map(function (item, index) {
                                 return Math.abs(item - newFriend.scores[index]);
                             })
-                            console.log("diff array", totalDifference);
+                            // This takes each difference value and adds them to the total difference score
                             for (let val of totalDifference) {
                                 sumTotal += val;
                             }
+                            // Each friend then receives a difference key
                             friend.difference = sumTotal;
                             friendDifferences.push(friend);
-                            console.log(friend);
-                            console.log("sum of array", sumTotal);
                         }
+                        // This compares all of the difference scores and sets the smallest difference
                         for (let diff of friendDifferences) {
                             if (diff.difference < bigDiff.difference) {
                                 bigDiff = diff;
                             }
                         }
-                        console.log(bigDiff);
+                        // This populates the modal with the details of the friend with the smallest difference
                         modalBody.innerHTML = `<h1>${bigDiff.name}</h1>
                         <hr>
                         <img src='${bigDiff.photo}' width='75%' alt='photo of ${bigDiff.name}'>`;

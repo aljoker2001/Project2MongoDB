@@ -7,12 +7,12 @@ module.exports = function (app) {
     
     app.post("/api/friends", function (req, res) {
         // req.body hosts is equal to the JSON post sent from the user
-        // This works because of our body parsing middleware
+        // This works because of the body parsing middleware
         var newFriend = req.body;
         console.log("new friend:", newFriend);
         friends.push(newFriend);
     
-        // We then display the JSON to the users
+        // The JSON is then displayed to the user
         res.json(friends);
     });
 }
