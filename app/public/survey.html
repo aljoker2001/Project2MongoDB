@@ -232,7 +232,14 @@
                         return response.json()
                     })
                     .then(data => {
-                        // Removes the user's submission from the list when comparing scores
+                        console.log('friend', data)
+                    })
+                // Pulls all friends for a comparison to the newly entered friend
+                fetch('/api/friends')
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(data => {
                         data.pop();
                         for (let friend of data) {
                             sumTotal = 0;
